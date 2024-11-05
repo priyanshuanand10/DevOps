@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out source code...'
+                git 'https://github.com/priyanshuanand10/DevOps.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Building application...'
+                sh 'mvn clean install'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                sh 'mvn test'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo "Deploying to ${DEPLOY_ENV} environment..."
+                sh 'scp target/myapp.jar user@production:/path/to/deploy/'
+            }
+        }
+    }
+    post {
+        always {
+            echo 'Cleaning up...'
+            deleteDir()
+        }
+    }
+}
